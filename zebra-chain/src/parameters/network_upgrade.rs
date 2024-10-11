@@ -28,6 +28,21 @@ pub const NETWORK_UPGRADES_IN_ORDER: [NetworkUpgrade; 10] = [
     Nu7,
 ];
 
+#[cfg(zcash_unstable = "nsm")]
+pub const NETWORK_UPGRADES_IN_ORDER: [NetworkUpgrade; 10] = [
+    Genesis,
+    BeforeOverwinter,
+    Overwinter,
+    Sapling,
+    Blossom,
+    Heartwood,
+    Canopy,
+    Nu5,
+    Nu6,
+    #[cfg(zcash_unstable = "nsm")]
+    ZFuture,
+];
+
 /// A Zcash network upgrade.
 ///
 /// Network upgrades change the Zcash network protocol or consensus rules. Note that they have no

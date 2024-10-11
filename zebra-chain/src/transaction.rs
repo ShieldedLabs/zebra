@@ -492,6 +492,17 @@ impl Transaction {
                 block::Height(0) => None,
                 block::Height(expiry_height) => Some(block::Height(*expiry_height)),
             },
+            #[cfg(zcash_unstable = "nsm")]
+            Transaction::ZFuture { expiry_height, .. } => match expiry_height {
+                // Consensus rule:
+                // > No limit: To set no limit on transactions (so that they do not expire), nExpiryHeight should be set to 0.
+                // https://zips.z.cash/zip-0203#specification
+                block::Height(0) => None,
+                block::Height(expiry_height) => Some(block::Height(*expiry_height)),
+            },
+        }
+    }
+
         }
     }
 
@@ -509,6 +520,10 @@ impl Transaction {
                 network_upgrade, ..
             }
             | Transaction::V6 {
+                network_upgrade, ..
+            } => Some(*network_upgrade),
+            #[cfg(zcash_unstable = "nsm")]
+            Transaction::ZFuture {
                 network_upgrade, ..
             } => Some(*network_upgrade),
         }
@@ -803,6 +818,11 @@ impl Transaction {
                 sapling_shielded_data: None,
                 ..
             } => Box::new(std::iter::empty()),
+            #[cfg(zcash_unstable = "nsm")]
+            Transaction::ZFuture {
+                sapling_shielded_data: None,
+                ..
+            } => Box::new(std::iter::empty()),
         }
     }
 
@@ -849,6 +869,11 @@ impl Transaction {
                 sapling_shielded_data: None,
                 ..
             } => Box::new(std::iter::empty()),
+            #[cfg(zcash_unstable = "nsm")]
+            Transaction::ZFuture {
+                sapling_shielded_data: None,
+                ..
+            } => Box::new(std::iter::empty()),
         }
     }
 
@@ -882,6 +907,11 @@ impl Transaction {
                 ..
             }
             | Transaction::V6 {
+                sapling_shielded_data: None,
+                ..
+            } => Box::new(std::iter::empty()),
+            #[cfg(zcash_unstable = "nsm")]
+            Transaction::ZFuture {
                 sapling_shielded_data: None,
                 ..
             } => Box::new(std::iter::empty()),
@@ -923,6 +953,11 @@ impl Transaction {
                 sapling_shielded_data: None,
                 ..
             } => Box::new(std::iter::empty()),
+            #[cfg(zcash_unstable = "nsm")]
+            Transaction::ZFuture {
+                sapling_shielded_data: None,
+                ..
+            } => Box::new(std::iter::empty()),
         }
     }
 
@@ -958,6 +993,11 @@ impl Transaction {
                 ..
             }
             | Transaction::V6 {
+                sapling_shielded_data: None,
+                ..
+            } => Box::new(std::iter::empty()),
+            #[cfg(zcash_unstable = "nsm")]
+            Transaction::ZFuture {
                 sapling_shielded_data: None,
                 ..
             } => Box::new(std::iter::empty()),
@@ -1271,6 +1311,11 @@ impl Transaction {
                 ..
             }
             | Transaction::V6 {
+                sapling_shielded_data: None,
+                ..
+            } => Amount::zero(),
+            #[cfg(zcash_unstable = "nsm")]
+            Transaction::ZFuture {
                 sapling_shielded_data: None,
                 ..
             } => Amount::zero(),

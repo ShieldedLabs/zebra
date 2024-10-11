@@ -8,6 +8,9 @@ use halo2::pasta::group::ff::PrimeField;
 use hex::FromHex;
 use reddsa::{orchard::Binding, orchard::SpendAuth, Signature};
 
+#[cfg(zcash_unstable = "nsm")]
+use crate::parameters::TX_ZFUTURE_VERSION_GROUP_ID;
+
 use crate::{
     amount,
     block::MAX_BLOCK_BYTES,
