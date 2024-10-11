@@ -6544,3 +6544,38 @@ dependencies = [
  "zcash_address",
  "zcash_protocol",
 ]
+
+[[patch.unused]]
+name = "zcash_address"
+version = "0.5.0"
+source = "git+https://github.com/zcash/librustzcash.git?rev=1410f1449100a417bfbc4f6c7167aa9808e38792#1410f1449100a417bfbc4f6c7167aa9808e38792"
+
+[[patch.unused]]
+name = "zcash_client_backend"
+version = "0.13.0"
+source = "git+https://github.com/zcash/librustzcash.git?rev=1410f1449100a417bfbc4f6c7167aa9808e38792#1410f1449100a417bfbc4f6c7167aa9808e38792"
+
+[[patch.unused]]
+name = "zcash_encoding"
+version = "0.2.1"
+source = "git+https://github.com/zcash/librustzcash.git?rev=1410f1449100a417bfbc4f6c7167aa9808e38792#1410f1449100a417bfbc4f6c7167aa9808e38792"
+
+[[patch.unused]]
+name = "zcash_history"
+version = "0.4.0"
+source = "git+https://github.com/zcash/librustzcash.git?rev=1410f1449100a417bfbc4f6c7167aa9808e38792#1410f1449100a417bfbc4f6c7167aa9808e38792"
+
+[[patch.unused]]
+name = "zcash_primitives"
+version = "0.17.0"
+source = "git+https://github.com/zcash/librustzcash.git?rev=1410f1449100a417bfbc4f6c7167aa9808e38792#1410f1449100a417bfbc4f6c7167aa9808e38792"
+
+[[patch.unused]]
+name = "zcash_proofs"
+version = "0.17.0"
+source = "git+https://github.com/zcash/librustzcash.git?rev=1410f1449100a417bfbc4f6c7167aa9808e38792#1410f1449100a417bfbc4f6c7167aa9808e38792"
+
+[[patch.unused]]
+name = "zcash_protocol"
+version = "0.3.0"
+source = "git+https://github.com/zcash/librustzcash.git?rev=1410f1449100a417bfbc4f6c7167aa9808e38792#1410f1449100a417bfbc4f6c7167aa9808e38792"

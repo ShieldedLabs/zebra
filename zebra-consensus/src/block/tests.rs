@@ -2,6 +2,7 @@
 
 use color_eyre::eyre::{eyre, Report};
 use once_cell::sync::Lazy;
+use subsidy::general::block_subsidy;
 use tower::{buffer::Buffer, util::BoxService};
 
 use zebra_chain::{
