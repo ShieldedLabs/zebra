@@ -15,7 +15,8 @@ use hex::{FromHex, ToHex};
 use proptest_derive::Arbitrary;
 
 /// A list of network upgrades in the order that they must be activated.
-const NETWORK_UPGRADES_IN_ORDER: [NetworkUpgrade; 9] = [
+#[cfg(not(zcash_unstable = "nsm"))]
+pub const NETWORK_UPGRADES_IN_ORDER: [NetworkUpgrade; 9] = [
     Genesis,
     BeforeOverwinter,
     Overwinter,
@@ -25,6 +26,21 @@ const NETWORK_UPGRADES_IN_ORDER: [NetworkUpgrade; 9] = [
     Canopy,
     Nu5,
     Nu6,
+];
+
+#[cfg(zcash_unstable = "nsm")]
+pub const NETWORK_UPGRADES_IN_ORDER: [NetworkUpgrade; 10] = [
+    Genesis,
+    BeforeOverwinter,
+    Overwinter,
+    Sapling,
+    Blossom,
+    Heartwood,
+    Canopy,
+    Nu5,
+    Nu6,
+    #[cfg(zcash_unstable = "nsm")]
+    ZFuture,
 ];
 
 /// A Zcash network upgrade.
@@ -61,6 +77,10 @@ pub enum NetworkUpgrade {
     /// The Zcash protocol after the NU6 upgrade.
     #[serde(rename = "NU6")]
     Nu6,
+    #[cfg(zcash_unstable = "nsm")]
+    #[serde(rename = "ZFuture")]
+    #[allow(non_snake_case)]
+    ZFuture,
 }
 
 impl TryFrom<u32> for NetworkUpgrade {
@@ -101,7 +121,10 @@ pub(super) const MAINNET_ACTIVATION_HEIGHTS: &[(block::Height, NetworkUpgrade)] 
     (block::Height(903_000), Heartwood),
     (block::Height(1_046_400), Canopy),
     (block::Height(1_687_104), Nu5),
+    // TODO: Update NU6 activation height once it's been specified.
     (block::Height(2_726_400), Nu6),
+    #[cfg(zcash_unstable = "nsm")]
+    (block::Height(3_000_000), ZFuture),
 ];
 
 /// Fake mainnet network upgrade activation heights, used in tests.
@@ -116,6 +139,8 @@ const FAKE_MAINNET_ACTIVATION_HEIGHTS: &[(block::Height, NetworkUpgrade)] = &[
     (block::Height(30), Canopy),
     (block::Height(35), Nu5),
     (block::Height(40), Nu6),
+    #[cfg(zcash_unstable = "nsm")]
+    (block::Height(45), ZFuture),
 ];
 
 /// Testnet network upgrade activation heights.
@@ -138,6 +163,8 @@ pub(super) const TESTNET_ACTIVATION_HEIGHTS: &[(block::Height, NetworkUpgrade)] 
     (block::Height(1_028_500), Canopy),
     (block::Height(1_842_420), Nu5),
     (block::Height(2_976_000), Nu6),
+    #[cfg(zcash_unstable = "nsm")]
+    (block::Height(3_000_000), ZFuture),
 ];
 
 /// Fake testnet network upgrade activation heights, used in tests.
@@ -152,6 +179,8 @@ const FAKE_TESTNET_ACTIVATION_HEIGHTS: &[(block::Height, NetworkUpgrade)] = &[
     (block::Height(30), Canopy),
     (block::Height(35), Nu5),
     (block::Height(40), Nu6),
+    #[cfg(zcash_unstable = "nsm")]
+    (block::Height(45), ZFuture),
 ];
 
 /// The Consensus Branch Id, used to bind transactions and blocks to a
@@ -243,6 +272,8 @@ pub(crate) const CONSENSUS_BRANCH_IDS: &[(NetworkUpgrade, ConsensusBranchId)] = 
     (Canopy, ConsensusBranchId(0xe9ff75a6)),
     (Nu5, ConsensusBranchId(0xc2d6d0b4)),
     (Nu6, ConsensusBranchId(0xc8e71055)),
+    #[cfg(zcash_unstable = "nsm")]
+    (ZFuture, ConsensusBranchId(0xffff_ffff)),
 ];
 
 /// The target block spacing before Blossom.
@@ -432,6 +463,8 @@ impl NetworkUpgrade {
         let spacing_seconds = match self {
             Genesis | BeforeOverwinter | Overwinter | Sapling => PRE_BLOSSOM_POW_TARGET_SPACING,
             Blossom | Heartwood | Canopy | Nu5 | Nu6 => POST_BLOSSOM_POW_TARGET_SPACING.into(),
+            #[cfg(zcash_unstable = "nsm")]
+            ZFuture => POST_BLOSSOM_POW_TARGET_SPACING.into(),
         };
 
         Duration::seconds(spacing_seconds)
@@ -550,6 +583,8 @@ impl From<zcash_protocol::consensus::NetworkUpgrade> for NetworkUpgrade {
             zcash_protocol::consensus::NetworkUpgrade::Canopy => Self::Canopy,
             zcash_protocol::consensus::NetworkUpgrade::Nu5 => Self::Nu5,
             zcash_protocol::consensus::NetworkUpgrade::Nu6 => Self::Nu6,
+            #[cfg(zcash_unstable = "nsm")]
+            zcash_protocol::consensus::NetworkUpgrade::ZFuture => Self::ZFuture,
         }
     }
 }
