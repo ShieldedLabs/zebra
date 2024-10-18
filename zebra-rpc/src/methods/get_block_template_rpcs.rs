@@ -13,7 +13,11 @@ use zcash_address::{unified::Encoding, TryFromAddress};
 
 use zebra_chain::{
     amount::{self, Amount, NonNegative},
-    block::{self, Block, Height, TryIntoHeight},
+    block::{
+        self,
+        subsidy::{funding_streams, general},
+        Block, Height, TryIntoHeight,
+    },
     chain_sync_status::ChainSyncStatus,
     chain_tip::ChainTip,
     parameters::{
@@ -26,12 +30,13 @@ use zebra_chain::{
         self, EXTRA_ZEBRA_COINBASE_DATA, MAX_COINBASE_DATA_LEN, MAX_COINBASE_HEIGHT_DATA_LEN,
     },
 };
-use zebra_consensus::{
-    block_subsidy, funding_stream_address, funding_stream_values, miner_subsidy, RouterError,
-};
+
+use zebra_consensus::RouterError;
+
+use zebra_state::{ReadRequest, ReadResponse};
+
 use zebra_network::AddressBookPeers;
 use zebra_node_services::mempool;
-use zebra_state::{ReadRequest, ReadResponse};
 
 use crate::{
     methods::{
@@ -1199,6 +1204,8 @@ where
     async fn get_block_subsidy(&self, height: Option<u32>) -> Result<BlockSubsidy> {
         let latest_chain_tip = self.latest_chain_tip.clone();
         let network = self.network.clone();
+        #[cfg(zcash_unstable = "nsm")]
+        let mut state_service = self.state.clone();
 
         let height = if let Some(height) = height {
             Height(height)
@@ -1218,8 +1225,37 @@ where
         // Always zero for post-halving blocks
         let founders = Amount::zero();
 
-        let total_block_subsidy =
-            block_subsidy(height, &network).map_error(server::error::LegacyCode::default())?;
+            #[cfg(zcash_unstable = "nsm")]
+            let total_block_subsidy = {
+                let money_reserve = match state_service
+                    .ready()
+                    .await
+                    .map_err(|_| Error {
+                        code: ErrorCode::InternalError,
+                        message: "".into(),
+                        data: None,
+                    })?
+                    .call(ReadRequest::TipPoolValues)
+                    .await
+                    .map_err(|_| Error {
+                        code: ErrorCode::InternalError,
+                        message: "".into(),
+                        data: None,
+                    })? {
+                    ReadResponse::TipPoolValues {
+                        tip_hash: _,
+                        tip_height: _,
+                        value_balance,
+                    } => value_balance.money_reserve(),
+                    _ => unreachable!("wrong response to ReadRequest::TipPoolValues"),
+                };
+                general::block_subsidy(height, &network, money_reserve).map_server_error()?
+            };
+
+            #[cfg(not(zcash_unstable = "nsm"))]
+            let total_block_subsidy =
+                general::block_subsidy_pre_nsm(height, &network).map_server_error(server::error::LegacyCode::default())?;
+
         let miner_subsidy = miner_subsidy(height, &network, total_block_subsidy)
             .map_error(server::error::LegacyCode::default())?;
 

@@ -38,6 +38,16 @@ pub enum Response {
     //       `LatestChainTip::best_tip_height_and_hash()`
     Tip(Option<(block::Height, block::Hash)>),
 
+    /// Response to [`Request::TipPoolValues`] with the current best chain tip values.
+    TipPoolValues {
+        /// The current best chain tip height.
+        tip_height: block::Height,
+        /// The current best chain tip hash.
+        tip_hash: block::Hash,
+        /// The value pool balance at the current best chain tip.
+        value_balance: ValueBalance<NonNegative>,
+    },
+
     /// Response to [`Request::BlockLocator`] with a block locator object.
     BlockLocator(Vec<block::Hash>),
 

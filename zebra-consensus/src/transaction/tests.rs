@@ -2079,11 +2079,13 @@ async fn v5_coinbase_transaction_expiry_height() {
 
     assert_eq!(
         result,
-        Err(TransactionError::CoinbaseExpiryBlockHeight {
-            expiry_height: Some(new_expiry_height),
-            block_height,
-            transaction_hash: new_transaction.hash(),
-        })
+        Err(TransactionError::Coinbase(
+            CoinbaseTransactionError::ExpiryBlockHeight {
+                expiry_height: Some(new_expiry_height),
+                block_height,
+                transaction_hash: new_transaction.hash(),
+            }
+        ))
     );
 
     // Decrement the expiry height so that it becomes invalid.
@@ -2110,11 +2112,13 @@ async fn v5_coinbase_transaction_expiry_height() {
 
     assert_eq!(
         result,
-        Err(TransactionError::CoinbaseExpiryBlockHeight {
-            expiry_height: Some(new_expiry_height),
-            block_height,
-            transaction_hash: new_transaction.hash(),
-        })
+        Err(TransactionError::Coinbase(
+            CoinbaseTransactionError::ExpiryBlockHeight {
+                expiry_height: Some(new_expiry_height),
+                block_height,
+                transaction_hash: new_transaction.hash(),
+            }
+        ))
     );
 
     // Test with matching heights again, but using a very high value
