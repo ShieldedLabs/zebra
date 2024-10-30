@@ -342,6 +342,7 @@ pub fn generate_coinbase_transaction(
                 height,
                 outputs,
                 extra_coinbase_data,
+                miner_fee,
                 zip233_amount,
             )
             .into()

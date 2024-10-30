@@ -102,8 +102,8 @@ impl Transaction {
             sapling_shielded_data: None,
             orchard_shielded_data: None,
 
-            // > The NSM zip233_amount field [ZIP-233] must be set. It can be set to 0.
-            zip233_amount: zip233_amount.unwrap_or(Amount::zero()),
+            // > The NSM zip233_amount field [ZIP-233] must be set at minimum to 60% of miner fees [ZIP-235].
+            zip233_amount: zip233_amount.unwrap_or_else(|| ((miner_fee * 6).unwrap() / 10).unwrap()),
         }
     }
 
