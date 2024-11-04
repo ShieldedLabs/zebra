@@ -628,7 +628,7 @@ where
         let mempool = self.mempool.clone();
         let mut latest_chain_tip = self.latest_chain_tip.clone();
         let sync_status = self.sync_status.clone();
-        let state = self.state.clone();
+        let mut state = self.state.clone();
 
         if let Some(HexData(block_proposal_bytes)) = parameters
             .as_ref()
@@ -910,6 +910,39 @@ where
             None
         };
 
+        #[cfg(zcash_unstable = "nsm")]
+            let expected_block_subsidy = {
+                let money_reserve = match state
+                    .ready()
+                    .await
+                    .map_err(|_| Error {
+                        code: ErrorCode::InternalError,
+                        message: "".into(),
+                        data: None,
+                    })?
+                    .call(ReadRequest::TipPoolValues)
+                    .await
+                    .map_err(|_| Error {
+                        code: ErrorCode::InternalError,
+                        message: "".into(),
+                        data: None,
+                    })? {
+                    ReadResponse::TipPoolValues {
+                        tip_hash: _,
+                        tip_height: _,
+                        value_balance,
+                    } => value_balance.money_reserve(),
+                    _ => unreachable!("wrong response to ReadRequest::TipPoolValues"),
+                };
+                general::block_subsidy(next_block_height, &network, money_reserve)
+                    .map_server_error()?
+            };
+
+            #[cfg(not(zcash_unstable = "nsm"))]
+            let expected_block_subsidy =
+                general::block_subsidy_pre_nsm(next_block_height, &network).map_server_error()?;
+
+
         // Randomly select some mempool transactions.
         let mempool_txs = zip317::select_mempool_transactions(
             &network,
@@ -919,6 +952,7 @@ where
             mempool_tx_deps,
             debug_like_zcashd,
             extra_coinbase_data.clone(),
+            expected_block_subsidy,
             zip233_amount,
         );
 

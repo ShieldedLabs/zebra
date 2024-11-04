@@ -62,6 +62,7 @@ pub fn select_mempool_transactions(
     mempool_tx_deps: TransactionDependencies,
     like_zcashd: bool,
     extra_coinbase_data: Vec<u8>,
+    expected_block_subsidy: Amount<NonNegative>,
     zip233_amount: Option<Amount<NonNegative>>,
 ) -> Vec<SelectedMempoolTx> {
     // Use a fake coinbase transaction to break the dependency between transaction
@@ -72,6 +73,7 @@ pub fn select_mempool_transactions(
         miner_address,
         like_zcashd,
         extra_coinbase_data,
+        expected_block_subsidy,
         zip233_amount,
     );
 
@@ -152,6 +154,7 @@ pub fn fake_coinbase_transaction(
     miner_address: &transparent::Address,
     like_zcashd: bool,
     extra_coinbase_data: Vec<u8>,
+    expected_block_subsidy: Amount<NonNegative>,
     zip233_amount: Option<Amount<NonNegative>>,
 ) -> TransactionTemplate<NegativeOrZero> {
     // Block heights are encoded as variable-length (script) and `u32` (lock time, expiry height).
@@ -172,6 +175,7 @@ pub fn fake_coinbase_transaction(
         miner_fee,
         like_zcashd,
         extra_coinbase_data,
+        expected_block_subsidy,
         zip233_amount,
     );
 
