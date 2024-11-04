@@ -7,7 +7,7 @@ use jsonrpsee_types::{ErrorCode, ErrorObject};
 use tower::{Service, ServiceExt};
 
 use zebra_chain::{
-    amount::{self, Amount, NegativeOrZero, NonNegative, MAX_MONEY},
+    amount::{self, Amount, NegativeOrZero, NonNegative},
     block::{
         self,
         merkle::{self, AuthDataRoot},
