@@ -314,7 +314,7 @@ fn mock_transparent_transaction(
             joinsplit_data: None,
             sapling_shielded_data: None,
         },
-        5 | 6 => Transaction::V5 {
+        5 => Transaction::V5 {
             inputs,
             outputs,
             lock_time,
