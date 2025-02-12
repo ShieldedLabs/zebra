@@ -778,13 +778,7 @@ impl Arbitrary for Transaction {
             NetworkUpgrade::Blossom | NetworkUpgrade::Heartwood | NetworkUpgrade::Canopy => {
                 Self::v4_strategy(ledger_state)
             }
-            NetworkUpgrade::Nu5 | NetworkUpgrade::Nu6 => prop_oneof![
-                Self::v4_strategy(ledger_state.clone()),
-                Self::v5_strategy(ledger_state)
-            ]
-            .boxed(),
-            #[cfg(zcash_unstable = "nsm")]
-            NetworkUpgrade::ZFuture => prop_oneof![
+            NetworkUpgrade::Nu5 | NetworkUpgrade::Nu6 | NetworkUpgrade::Nu7 => prop_oneof![
                 Self::v4_strategy(ledger_state.clone()),
                 Self::v5_strategy(ledger_state)
             ]
@@ -930,8 +924,22 @@ pub fn transaction_to_fake_v5(
             orchard_shielded_data: None,
         },
         v5 @ V5 { .. } => v5.clone(),
-        #[cfg(zcash_unstable = "nsm")]
-        ZFuture { .. } => todo!(),
+        V6 {
+            inputs,
+            outputs,
+            lock_time,
+            sapling_shielded_data,
+            orchard_shielded_data,
+            ..
+        } => V5 {
+            network_upgrade: block_nu,
+            inputs: inputs.to_vec(),
+            outputs: outputs.to_vec(),
+            lock_time: *lock_time,
+            expiry_height: height,
+            sapling_shielded_data: sapling_shielded_data.clone(),
+            orchard_shielded_data: orchard_shielded_data.clone(),
+        },
     }
 }
 
@@ -1014,7 +1022,8 @@ pub fn v5_transactions<'b>(
         Transaction::V1 { .. }
         | Transaction::V2 { .. }
         | Transaction::V3 { .. }
-        | Transaction::V4 { .. } => None,
+        | Transaction::V4 { .. }
+        | Transaction::V6 { .. } => None,
         ref tx @ Transaction::V5 { .. } => Some(tx.clone()),
     })
 }

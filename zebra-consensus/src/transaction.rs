@@ -523,11 +523,10 @@ where
                     sapling_shielded_data,
                     orchard_shielded_data,
                 )?,
-                #[cfg(zcash_unstable = "nsm")]
-                Transaction::ZFuture {
+                Transaction::V6 {
                     sapling_shielded_data,
                     orchard_shielded_data,
-                     .. } => Self::verify_zfuture_transaction(
+                     .. } => Self::verify_v6_transaction(
                     &req,
                     &network,
                     script_verifier,
@@ -566,9 +565,8 @@ where
             // Get the `value_balance` to calculate the transaction fee.
             let value_balance = tx.value_balance(&spent_utxos);
 
-            let burn_amount = match *tx {
-                #[cfg(zcash_unstable = "nsm")]
-                Transaction::ZFuture{ .. } => tx.burn_amount(),
+            let zip233_amount = match *tx {
+                Transaction::V6{ .. } => tx.zip233_amount(),
                 _ => Amount::zero()
             };
 
@@ -578,7 +576,7 @@ where
                 // TODO: deduplicate this code with remaining_transaction_value()?
                 miner_fee = value_balance
                     .map(|vb| vb.remaining_transaction_value())
-                    .map(|tx_rtv| tx_rtv - burn_amount)
+                    .map(|tx_rtv| tx_rtv - zip233_amount)
                     .or(Err(TransactionError::IncorrectFee))?
                     .ok();
             }
@@ -941,7 +939,8 @@ where
             | NetworkUpgrade::Heartwood
             | NetworkUpgrade::Canopy
             | NetworkUpgrade::Nu5
-            | NetworkUpgrade::Nu6 => Ok(()),
+            | NetworkUpgrade::Nu6
+            | NetworkUpgrade::Nu7 => Ok(()),
 
             // Does not support V4 transactions
             NetworkUpgrade::Genesis
@@ -950,9 +949,6 @@ where
                 transaction.version(),
                 network_upgrade,
             )),
-
-            #[cfg(zcash_unstable = "nsm")]
-            NetworkUpgrade::ZFuture => Ok(()),
         }
     }
 
@@ -1030,9 +1026,7 @@ where
             //
             // Note: Here we verify the transaction version number of the above rule, the group
             // id is checked in zebra-chain crate, in the transaction serialize.
-            NetworkUpgrade::Nu5 | NetworkUpgrade::Nu6 => Ok(()),
-            #[cfg(zcash_unstable = "nsm")]
-            NetworkUpgrade::ZFuture => Ok(()),
+            NetworkUpgrade::Nu5 | NetworkUpgrade::Nu6 | NetworkUpgrade::Nu7 => Ok(()),
 
             // Does not support V5 transactions
             NetworkUpgrade::Genesis
@@ -1048,9 +1042,8 @@ where
         }
     }
 
-    /// Verify a ZFUTURE transaction.
-    #[cfg(zcash_unstable = "nsm")]
-    fn verify_zfuture_transaction(
+    /// Verify a V6 transaction.
+    fn verify_v6_transaction(
         request: &Request,
         network: &Network,
         script_verifier: script::Verifier,
@@ -1059,19 +1052,17 @@ where
         orchard_shielded_data: &Option<orchard::ShieldedData>,
     ) -> Result<AsyncChecks, TransactionError> {
         let transaction = request.transaction();
-        let upgrade = request.upgrade(network);
+        let nu = request.upgrade(network);
 
-        if upgrade != NetworkUpgrade::ZFuture {
+        if nu != NetworkUpgrade::Nu7 {
             return Err(TransactionError::UnsupportedByNetworkUpgrade(
                 transaction.version(),
-                upgrade,
+                nu,
             ));
         }
 
         let shielded_sighash = transaction.sighash(
-            upgrade
-                .branch_id()
-                .expect("Overwinter-onwards must have branch ID, and we checkpoint on Canopy"),
+            nu,
             HashType::ALL,
             cached_ffi_transaction.all_previous_outputs(),
             None,

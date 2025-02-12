@@ -1566,8 +1566,7 @@ impl Chain {
                 V1 { .. } | V2 { .. } | V3 { .. } => unreachable!(
                     "older transaction versions only exist in finalized blocks, because of the mandatory canopy checkpoint",
                 ),
-                #[cfg(zcash_unstable = "nsm")]
-                ZFuture {
+                V6 {
                     inputs,
                     outputs,
                     sapling_shielded_data,
@@ -1749,8 +1748,7 @@ impl UpdateWith<ContextuallyVerifiedBlock> for Chain {
                 V1 { .. } | V2 { .. } | V3 { .. } => unreachable!(
                     "older transaction versions only exist in finalized blocks, because of the mandatory canopy checkpoint",
                 ),
-                #[cfg(zcash_unstable = "nsm")]
-                ZFuture {
+                V6 {
                     inputs,
                     outputs,
                     sapling_shielded_data,
