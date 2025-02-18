@@ -175,16 +175,6 @@ impl NonEmptyHistoryTree {
                 )?;
                 (InnerHistoryTree::OrchardOnward(tree), entry)
             }
-            #[cfg(zcash_unstable = "nsm")]
-            NetworkUpgrade::ZFuture => {
-                let (tree, entry) = Tree::<OrchardOnward>::new_from_block(
-                    network,
-                    block,
-                    sapling_root,
-                    orchard_root,
-                )?;
-                (InnerHistoryTree::OrchardOnward(tree), entry)
-            }
         };
         let mut peaks = BTreeMap::new();
         peaks.insert(0u32, entry);

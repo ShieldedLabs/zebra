@@ -1688,7 +1688,7 @@ async fn rpc_getblocktemplate_mining_address(use_p2pkh: bool) {
                     history_tree: fake_history_tree(&Mainnet),
                 }));
 
-            #[cfg(zcash_unstable = "nsm")]
+            #[cfg(zcash_unstable = "zip234")]
             read_state
                 .expect_request_that(|req| matches!(req, ReadRequest::TipPoolValues))
                 .await

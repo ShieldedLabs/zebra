@@ -2194,9 +2194,9 @@ impl UpdateWith<ValueBalance<NegativeAllowed>> for Chain {
         {
             Ok(chain_value_pools) => self.chain_value_pools = chain_value_pools,
             Err(value_balance_error) => Err(ValidateContextError::AddValuePool {
-                value_balance_error,
-                chain_value_pools: self.chain_value_pools,
-                block_value_pool_change: *block_value_pool_change,
+                value_balance_error: Arc::new(value_balance_error),
+                chain_value_pools: Arc::new(self.chain_value_pools),
+                block_value_pool_change: Arc::new(*block_value_pool_change),
                 // assume that the current block is added to `blocks` after `update_chain_tip_with`
                 height: self.max_block_height().and_then(|height| height + 1),
             })?,

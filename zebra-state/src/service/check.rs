@@ -92,11 +92,11 @@ where
     check::height_one_more_than_parent_height(parent_height, semantically_verified.height)?;
 
     if semantically_verified.height > network.slow_start_interval() {
-        #[cfg(not(zcash_unstable = "nsm"))]
+        #[cfg(not(zcash_unstable = "zip234"))]
         let expected_block_subsidy =
             general::block_subsidy_pre_nsm(semantically_verified.height, network)?;
 
-        #[cfg(zcash_unstable = "nsm")]
+        #[cfg(zcash_unstable = "zip234")]
         let expected_block_subsidy = {
             let money_reserve = if semantically_verified.height > 1.try_into().unwrap() {
                 pool_value_balance
@@ -626,9 +626,9 @@ pub fn transaction_miner_fees_are_valid(
     let orchard_value_balance = coinbase_tx.orchard_value_balance().orchard_amount();
 
     // Coinbase transaction can still have a ZSF deposit
-    #[cfg(zcash_unstable = "nsm")]
-    let burn_amount = coinbase_tx
-        .burn_amount()
+    #[cfg(zcash_unstable = "zip234")]
+    let zip233_amount = coinbase_tx
+        .zip233_amount()
         .constrain()
         .expect("positive value always fit in `NegativeAllowed`");
 
@@ -636,8 +636,8 @@ pub fn transaction_miner_fees_are_valid(
         transparent_value_balance,
         sapling_value_balance,
         orchard_value_balance,
-        #[cfg(zcash_unstable = "nsm")]
-        burn_amount,
+        #[cfg(zcash_unstable = "zip234")]
+        zip233_amount,
         expected_block_subsidy,
         block_miner_fees,
         expected_deferred_amount,
@@ -653,7 +653,7 @@ pub fn miner_fees_are_valid(
     transparent_value_balance: Amount,
     sapling_value_balance: Amount,
     orchard_value_balance: Amount,
-    #[cfg(zcash_unstable = "nsm")] burn_amount: Amount,
+    #[cfg(zcash_unstable = "zip234")] zip233_amount: Amount,
     expected_block_subsidy: Amount<NonNegative>,
     block_miner_fees: Amount<NonNegative>,
     expected_deferred_amount: Amount<NonNegative>,
@@ -671,11 +671,11 @@ pub fn miner_fees_are_valid(
     //
     // The expected lockbox funding stream output of the coinbase transaction is also subtracted
     // from the block subsidy value plus the transaction fees paid by transactions in this block.
-    #[cfg(zcash_unstable = "nsm")]
+    #[cfg(zcash_unstable = "zip234")]
     let left = (transparent_value_balance - sapling_value_balance - orchard_value_balance
-        + burn_amount)
+        + zip233_amount)
         .map_err(|_| SubsidyError::SumOverflow)?;
-    #[cfg(not(zcash_unstable = "nsm"))]
+    #[cfg(not(zcash_unstable = "zip234"))]
     let left = (transparent_value_balance - sapling_value_balance - orchard_value_balance)
         .map_err(|_| SubsidyError::SumOverflow)?;
     let right = (expected_block_subsidy + block_miner_fees - expected_deferred_amount)
@@ -700,14 +700,13 @@ pub fn miner_fees_are_valid(
         Err(SubsidyError::InvalidMinerFees)?
     };
 
-    // Verify that the NSM burn amount is at least the minimum required amount (ZIP-235).
-    #[cfg(zcash_unstable = "nsm")]
-    if network_upgrade == NetworkUpgrade::ZFuture {
-        let minimum_burn_amount = ((block_miner_fees * 6).unwrap() / 10).unwrap();
-        if burn_amount < minimum_burn_amount {
-            Err(SubsidyError::InvalidBurnAmount)?
+    // Verify that the NSM zip233 amount is at least the minimum required amount (ZIP-235).
+    #[cfg(zcash_unstable = "zip235")]
+    if network_upgrade == NetworkUpgrade::Nu7 {
+        let minimum_zip233_amount = ((block_miner_fees * 6).unwrap() / 10).unwrap();
+        if zip233_amount < minimum_zip233_amount {
+            Err(SubsidyError::InvalidZip233Amount)?
         }
     }
-
     Ok(())
 }

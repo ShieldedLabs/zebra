@@ -23,6 +23,7 @@ use zebra_chain::{
     serialization::{DateTime32, ZcashDeserializeInto},
     transaction::Transaction,
     transparent,
+    value_balance::ValueBalance,
     work::difficulty::{CompactDifficulty, ParameterDifficulty as _},
 };
 use zebra_network::{address_book_peers::MockAddressBookPeers, types::MetaAddr};
@@ -239,7 +240,7 @@ pub async fn test_responses<State, ReadState>(
     // get a new empty state
     let read_state = MockService::build().for_unit_tests();
 
-    let make_mock_read_state_request_handler = || {
+    let make_mock_read_state_request_handler = |mock_tip_pool_values_resp: bool| {
         let mut read_state = read_state.clone();
 
         async move {
@@ -255,6 +256,18 @@ pub async fn test_responses<State, ReadState>(
                     max_time: fake_max_time,
                     history_tree: fake_history_tree(network),
                 }));
+
+            if mock_tip_pool_values_resp {
+                #[cfg(zcash_unstable = "zip234")]
+                read_state
+                    .expect_request_that(|req| matches!(req, ReadRequest::TipPoolValues))
+                    .await
+                    .respond(ReadResponse::TipPoolValues {
+                        tip_height: fake_tip_height,
+                        tip_hash: fake_tip_hash,
+                        value_balance: ValueBalance::zero(),
+                    });
+            }
         }
     };
 
@@ -293,7 +306,7 @@ pub async fn test_responses<State, ReadState>(
     // Basic variant (default mode and no extra features)
 
     // Fake the ChainInfo and FullTransaction responses
-    let mock_read_state_request_handler = make_mock_read_state_request_handler();
+    let mock_read_state_request_handler = make_mock_read_state_request_handler(true);
     let mock_mempool_request_handler = make_mock_mempool_request_handler();
 
     let get_block_template_fut = get_block_template_rpc_mock_state.get_block_template(None);
@@ -332,7 +345,7 @@ pub async fn test_responses<State, ReadState>(
         .expect("unexpected invalid LongPollId");
 
     // Fake the ChainInfo and FullTransaction responses
-    let mock_read_state_request_handler = make_mock_read_state_request_handler();
+    let mock_read_state_request_handler = make_mock_read_state_request_handler(true);
     let mock_mempool_request_handler = make_mock_mempool_request_handler();
 
     let get_block_template_fut = get_block_template_rpc_mock_state.get_block_template(
@@ -478,7 +491,7 @@ pub async fn test_responses<State, ReadState>(
     // This RPC snapshot uses both the mock and populated states
 
     // Fake the ChainInfo response using the mock state
-    let mock_read_state_request_handler = make_mock_read_state_request_handler();
+    let mock_read_state_request_handler = make_mock_read_state_request_handler(false);
 
     let get_difficulty_fut = get_block_template_rpc_mock_state.get_difficulty();
 

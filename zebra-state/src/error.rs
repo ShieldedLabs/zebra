@@ -215,9 +215,9 @@ pub enum ValidateContextError {
     )]
     #[non_exhaustive]
     AddValuePool {
-        value_balance_error: ValueBalanceError,
-        chain_value_pools: ValueBalance<NonNegative>,
-        block_value_pool_change: ValueBalance<NegativeAllowed>,
+        value_balance_error: Arc<ValueBalanceError>,
+        chain_value_pools: Arc<ValueBalance<NonNegative>>,
+        block_value_pool_change: Arc<ValueBalance<NegativeAllowed>>,
         height: Option<block::Height>,
     },
 
@@ -267,21 +267,21 @@ pub enum ValidateContextError {
     },
 
     #[error("could not validate block subsidy")]
-    SubsidyError(Box<SubsidyError>),
+    SubsidyError(Arc<SubsidyError>),
 
     #[error("could not validate coinbase transaction")]
-    CoinbaseTransactionError(Box<CoinbaseTransactionError>),
+    CoinbaseTransactionError(Arc<CoinbaseTransactionError>),
 }
 
 impl From<SubsidyError> for ValidateContextError {
     fn from(err: SubsidyError) -> Self {
-        ValidateContextError::SubsidyError(Box::new(err))
+        ValidateContextError::SubsidyError(Arc::new(err))
     }
 }
 
 impl From<CoinbaseTransactionError> for ValidateContextError {
     fn from(err: CoinbaseTransactionError) -> Self {
-        ValidateContextError::CoinbaseTransactionError(Box::new(err))
+        ValidateContextError::CoinbaseTransactionError(Arc::new(err))
     }
 }
 

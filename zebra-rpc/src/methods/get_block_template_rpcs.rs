@@ -298,7 +298,7 @@ pub trait GetBlockTemplateRpc {
     ///
     /// - `num_blocks`: (numeric, required, example=1) Number of blocks to be generated.
     ///
-    /// - `zip233_amount`: (numeric, optional) The amount of money to be burned in a transaction [ZIP-233]
+    /// - `zip233_amount`: (numeric, optional) The zip233 amount of a transaction [ZIP-233]
     /// # Notes
     ///
     /// Only works if the network of the running zebrad process is `Regtest`.
@@ -910,38 +910,30 @@ where
             None
         };
 
-        #[cfg(zcash_unstable = "nsm")]
-            let expected_block_subsidy = {
-                let money_reserve = match state
+        #[cfg(zcash_unstable = "zip234")]
+        let expected_block_subsidy = {
+            let money_reserve = {
+                let response = state
                     .ready()
+                    .and_then(|service| service.call(ReadRequest::TipPoolValues))
                     .await
-                    .map_err(|_| Error {
-                        code: ErrorCode::InternalError,
-                        message: "".into(),
-                        data: None,
-                    })?
-                    .call(ReadRequest::TipPoolValues)
-                    .await
-                    .map_err(|_| Error {
-                        code: ErrorCode::InternalError,
-                        message: "".into(),
-                        data: None,
-                    })? {
+                    .map_error(server::error::LegacyCode::default())?;
+                match response {
                     ReadResponse::TipPoolValues {
                         tip_hash: _,
                         tip_height: _,
                         value_balance,
                     } => value_balance.money_reserve(),
                     _ => unreachable!("wrong response to ReadRequest::TipPoolValues"),
-                };
-                general::block_subsidy(next_block_height, &network, money_reserve)
-                    .map_server_error()?
+                }
             };
+            general::block_subsidy(next_block_height, &network, money_reserve)
+                .map_error(server::error::LegacyCode::default())?
+        };
 
-            #[cfg(not(zcash_unstable = "nsm"))]
-            let expected_block_subsidy =
-                general::block_subsidy_pre_nsm(next_block_height, &network).map_server_error()?;
-
+        #[cfg(not(zcash_unstable = "zip234"))]
+        let expected_block_subsidy = general::block_subsidy_pre_nsm(next_block_height, &network)
+            .map_error(server::error::LegacyCode::default())?;
 
         // Randomly select some mempool transactions.
         let mempool_txs = zip317::select_mempool_transactions(
@@ -975,6 +967,7 @@ where
             submit_old,
             debug_like_zcashd,
             extra_coinbase_data,
+            expected_block_subsidy,
             zip233_amount,
         );
 
@@ -1238,7 +1231,7 @@ where
     async fn get_block_subsidy(&self, height: Option<u32>) -> Result<BlockSubsidy> {
         let latest_chain_tip = self.latest_chain_tip.clone();
         let network = self.network.clone();
-        #[cfg(zcash_unstable = "nsm")]
+        #[cfg(zcash_unstable = "zip234")]
         let mut state_service = self.state.clone();
 
         let height = if let Some(height) = height {
@@ -1259,42 +1252,36 @@ where
         // Always zero for post-halving blocks
         let founders = Amount::zero();
 
-            #[cfg(zcash_unstable = "nsm")]
-            let total_block_subsidy = {
-                let money_reserve = match state_service
+        #[cfg(zcash_unstable = "zip234")]
+        let total_block_subsidy = {
+            let money_reserve = {
+                let response = state_service
                     .ready()
+                    .and_then(|service| service.call(ReadRequest::TipPoolValues))
                     .await
-                    .map_err(|_| Error {
-                        code: ErrorCode::InternalError,
-                        message: "".into(),
-                        data: None,
-                    })?
-                    .call(ReadRequest::TipPoolValues)
-                    .await
-                    .map_err(|_| Error {
-                        code: ErrorCode::InternalError,
-                        message: "".into(),
-                        data: None,
-                    })? {
+                    .map_error(server::error::LegacyCode::default())?;
+                match response {
                     ReadResponse::TipPoolValues {
                         tip_hash: _,
                         tip_height: _,
                         value_balance,
                     } => value_balance.money_reserve(),
                     _ => unreachable!("wrong response to ReadRequest::TipPoolValues"),
-                };
-                general::block_subsidy(height, &network, money_reserve).map_server_error()?
+                }
             };
+            general::block_subsidy(height, &network, money_reserve)
+                .map_error(server::error::LegacyCode::default())?
+        };
 
-            #[cfg(not(zcash_unstable = "nsm"))]
-            let total_block_subsidy =
-                general::block_subsidy_pre_nsm(height, &network).map_server_error(server::error::LegacyCode::default())?;
+        #[cfg(not(zcash_unstable = "zip234"))]
+        let total_block_subsidy = general::block_subsidy_pre_nsm(height, &network)
+            .map_error(server::error::LegacyCode::default())?;
 
-        let miner_subsidy = miner_subsidy(height, &network, total_block_subsidy)
+        let miner_subsidy = general::miner_subsidy(height, &network, total_block_subsidy)
             .map_error(server::error::LegacyCode::default())?;
 
         let (lockbox_streams, mut funding_streams): (Vec<_>, Vec<_>) =
-            funding_stream_values(height, &network, total_block_subsidy)
+            funding_streams::funding_stream_values(height, &network, total_block_subsidy)
                 .map_error(server::error::LegacyCode::default())?
                 .into_iter()
                 // Separate the funding streams into deferred and non-deferred streams
@@ -1321,7 +1308,8 @@ where
                 streams
                     .into_iter()
                     .map(|(receiver, value)| {
-                        let address = funding_stream_address(height, &network, receiver);
+                        let address =
+                            funding_streams::funding_stream_address(height, &network, receiver);
                         FundingStream::new(is_nu6, receiver, value, address)
                     })
                     .collect()

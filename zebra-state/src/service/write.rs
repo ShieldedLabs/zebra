@@ -189,12 +189,12 @@ pub fn write_blocks_from_channels(
         // We can't get the block subsidy for blocks with heights in the slow start interval, so we
         // omit the calculation of the expected deferred amount.
         let expected_deferred_amount = if ordered_block_height > network.slow_start_interval() {
-            #[cfg(not(zcash_unstable = "nsm"))]
+            #[cfg(not(zcash_unstable = "zip234"))]
             let expected_block_subsidy =
                 general::block_subsidy_pre_nsm(ordered_block_height, &network)
                     .expect("valid block subsidy");
 
-            #[cfg(zcash_unstable = "nsm")]
+            #[cfg(zcash_unstable = "zip234")]
             let expected_block_subsidy = {
                 let money_reserve = if ordered_block_height > 1.try_into().unwrap() {
                     finalized_state.db.finalized_value_pool().money_reserve()

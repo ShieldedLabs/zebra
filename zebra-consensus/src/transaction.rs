@@ -951,9 +951,6 @@ where
                 transaction.version(),
                 network_upgrade,
             )),
-
-            #[cfg(zcash_unstable = "nsm")]
-            NetworkUpgrade::ZFuture => Ok(()),
         }
     }
 

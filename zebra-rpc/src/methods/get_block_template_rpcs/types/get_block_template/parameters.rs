@@ -92,7 +92,7 @@ pub struct JsonParameters {
     #[serde(rename = "workid")]
     pub _work_id: Option<String>,
 
-    /// The amount of money to be burned in a transaction [ZIP-233]
+    /// The zip233 amount of a transaction [ZIP-233]
     pub zip233_amount: Option<Amount<NonNegative>>,
 }
 

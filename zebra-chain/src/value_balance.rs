@@ -398,7 +398,7 @@ impl ValueBalance<NonNegative> {
         })
     }
 
-    #[cfg(zcash_unstable = "nsm")]
+    #[cfg(zcash_unstable = "zip234")]
     pub fn money_reserve(&self) -> Amount<NonNegative> {
         let max_money: Amount<NonNegative> = MAX_MONEY
             .try_into()

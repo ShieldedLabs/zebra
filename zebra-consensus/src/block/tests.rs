@@ -573,13 +573,13 @@ fn miner_fees_validation_failure() -> Result<(), Report> {
     Ok(())
 }
 
-#[cfg(zcash_unstable = "nsm")]
+#[cfg(zcash_unstable = "zip235")]
 #[test]
-fn miner_fees_validation_fails_when_burn_amount_is_zero() -> Result<(), Report> {
+fn miner_fees_validation_fails_when_zip233_amount_is_zero() -> Result<(), Report> {
     let transparent_value_balance = 100_001_000.try_into().unwrap();
     let sapling_value_balance = Amount::zero();
     let orchard_value_balance = Amount::zero();
-    let burn_amount = Amount::zero();
+    let zip233_amount = Amount::zero();
     let expected_block_subsidy = 100_000_000.try_into().unwrap();
     let block_miner_fees = 1000.try_into().unwrap();
     let expected_deferred_amount = Amount::zero();
@@ -589,25 +589,25 @@ fn miner_fees_validation_fails_when_burn_amount_is_zero() -> Result<(), Report> 
             transparent_value_balance,
             sapling_value_balance,
             orchard_value_balance,
-            burn_amount,
+            zip233_amount,
             expected_block_subsidy,
             block_miner_fees,
             expected_deferred_amount,
-            NetworkUpgrade::ZFuture
+            NetworkUpgrade::Nu7
         ),
-        Err(SubsidyError::InvalidBurnAmount)
+        Err(SubsidyError::InvalidZip233Amount)
     );
 
     Ok(())
 }
 
-#[cfg(zcash_unstable = "nsm")]
+#[cfg(zcash_unstable = "zip234")]
 #[test]
-fn miner_fees_validation_succeeds_when_burn_amount_is_correct() -> Result<(), Report> {
+fn miner_fees_validation_succeeds_when_zip233_amount_is_correct() -> Result<(), Report> {
     let transparent_value_balance = 100_001_000.try_into().unwrap();
     let sapling_value_balance = Amount::zero();
     let orchard_value_balance = Amount::zero();
-    let burn_amount = 600.try_into().unwrap();
+    let zip233_amount = 600.try_into().unwrap();
     let expected_block_subsidy = (100_000_600).try_into().unwrap();
     let block_miner_fees = 1000.try_into().unwrap();
     let expected_deferred_amount = Amount::zero();
@@ -617,11 +617,11 @@ fn miner_fees_validation_succeeds_when_burn_amount_is_correct() -> Result<(), Re
             transparent_value_balance,
             sapling_value_balance,
             orchard_value_balance,
-            burn_amount,
+            zip233_amount,
             expected_block_subsidy,
             block_miner_fees,
             expected_deferred_amount,
-            NetworkUpgrade::ZFuture
+            NetworkUpgrade::Nu7
         ),
         Ok(())
     );
@@ -629,13 +629,13 @@ fn miner_fees_validation_succeeds_when_burn_amount_is_correct() -> Result<(), Re
     Ok(())
 }
 
-#[cfg(zcash_unstable = "nsm")]
+#[cfg(zcash_unstable = "zip235")]
 #[test]
-fn miner_fees_validation_fails_when_burn_amount_is_incorrect() -> Result<(), Report> {
+fn miner_fees_validation_fails_when_zip233_amount_is_incorrect() -> Result<(), Report> {
     let transparent_value_balance = 100_001_000.try_into().unwrap();
     let sapling_value_balance = Amount::zero();
     let orchard_value_balance = Amount::zero();
-    let burn_amount = 500.try_into().unwrap();
+    let zip233_amount = 500.try_into().unwrap();
     let expected_block_subsidy = (100_000_500).try_into().unwrap();
     let block_miner_fees = 1000.try_into().unwrap();
     let expected_deferred_amount = Amount::zero();
@@ -645,13 +645,13 @@ fn miner_fees_validation_fails_when_burn_amount_is_incorrect() -> Result<(), Rep
             transparent_value_balance,
             sapling_value_balance,
             orchard_value_balance,
-            burn_amount,
+            zip233_amount,
             expected_block_subsidy,
             block_miner_fees,
             expected_deferred_amount,
-            NetworkUpgrade::ZFuture
+            NetworkUpgrade::Nu7
         ),
-        Err(SubsidyError::InvalidBurnAmount)
+        Err(SubsidyError::InvalidZip233Amount)
     );
 
     Ok(())

@@ -21,9 +21,6 @@ use zebra_chain::{
     transaction::{Transaction, UnminedTx, VerifiedUnminedTx},
     transparent,
 };
-use zebra_consensus::{
-    block_subsidy, funding_stream_address, funding_stream_values, miner_subsidy,
-};
 use zebra_node_services::mempool::{self, TransactionDependencies};
 use zebra_state::GetBlockTemplateChainInfo;
 
@@ -353,6 +350,7 @@ pub fn generate_coinbase_transaction(
                 height,
                 outputs,
                 extra_coinbase_data,
+                #[cfg(zcash_unstable = "zip235")]
                 miner_fee,
                 zip233_amount,
             )

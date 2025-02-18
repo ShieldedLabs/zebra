@@ -16,6 +16,8 @@ impl Transaction {
         height: Height,
         outputs: impl IntoIterator<Item = (Amount<NonNegative>, transparent::Script)>,
         extra_coinbase_data: Vec<u8>,
+        #[cfg(zcash_unstable = "zip235")]
+        miner_fee: Amount<NonNegative>,
         zip233_amount: Option<Amount<NonNegative>>,
     ) -> Transaction {
         // # Consensus
@@ -103,7 +105,12 @@ impl Transaction {
             orchard_shielded_data: None,
 
             // > The NSM zip233_amount field [ZIP-233] must be set at minimum to 60% of miner fees [ZIP-235].
-            zip233_amount: zip233_amount.unwrap_or_else(|| ((miner_fee * 6).unwrap() / 10).unwrap()),
+            #[cfg(zcash_unstable = "zip235")]
+            zip233_amount: zip233_amount
+                .unwrap_or_else(|| ((miner_fee * 6).unwrap() / 10).unwrap()),
+
+            #[cfg(not(zcash_unstable = "zip235"))]
+            zip233_amount: zip233_amount.unwrap_or(Amount::zero()),
         }
     }
 

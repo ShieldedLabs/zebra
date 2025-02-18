@@ -17,7 +17,6 @@ categories = ["asynchronous", "cryptography::cryptocurrencies", "encoding"]
 [features]
 default = []
 
-nsm = []
 
 # Production features that activate extra functionality
 
@@ -182,4 +181,4 @@ name = "redpallas"
 harness = false
 
 [lints.rust]
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(zcash_unstable, values("nsm"))'] }
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(zcash_unstable, values("zip234", "zip235"))'] }

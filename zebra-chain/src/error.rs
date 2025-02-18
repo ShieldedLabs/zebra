@@ -3,6 +3,11 @@
 use std::io;
 use thiserror::Error;
 
+use crate::{amount, block::error::BlockError};
+
+#[cfg(any(test, feature = "proptest-impl"))]
+use proptest_derive::Arbitrary;
+
 // TODO: Move all these enums into a common enum at the bottom.
 
 /// Errors related to random bytes generation.
@@ -93,8 +98,8 @@ pub enum SubsidyError {
     #[error("invalid amount")]
     InvalidAmount(amount::Error),
 
-    #[error("invalid burn amount")]
-    InvalidBurnAmount,
+    #[error("invalid zip233 amount")]
+    InvalidZip233Amount,
 
     #[error("unexpected error occurred: {0}")]
     Other(String),

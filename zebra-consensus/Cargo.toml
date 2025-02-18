@@ -17,8 +17,6 @@ categories = ["asynchronous", "cryptography::cryptocurrencies"]
 [features]
 default = []
 
-nsm = []
-
 # Production features that activate extra dependencies, or extra features in dependencies
 
 progress-bar = [
@@ -101,4 +99,4 @@ zebra-chain = { path = "../zebra-chain", version = "1.0.0-beta.45", features = [
 zebra-test = { path = "../zebra-test/", version = "1.0.0-beta.45" }
 
 [lints.rust]
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(zcash_unstable, values("nsm"))'] }
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(zcash_unstable, values("zip234", "zip235"))'] }

@@ -57,15 +57,15 @@ pub fn num_halvings(height: Height, network: &Network) -> u32 {
         .expect("already checked for negatives")
 }
 
-#[cfg(zcash_unstable = "nsm")]
+#[cfg(zcash_unstable = "zip234")]
 pub fn block_subsidy(
     height: Height,
     network: &Network,
     money_reserve: Amount<NonNegative>,
 ) -> Result<Amount<NonNegative>, SubsidyError> {
-    let nsm_activation_height = ZFuture
+    let nsm_activation_height = Nu7
         .activation_height(network)
-        .expect("ZFuture activation height should be available");
+        .expect("Nu7 activation height should be available");
 
     if height < nsm_activation_height {
         block_subsidy_pre_nsm(height, network)

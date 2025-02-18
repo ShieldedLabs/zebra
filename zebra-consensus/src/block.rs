@@ -23,10 +23,7 @@ use tower::{Service, ServiceExt};
 use tracing::Instrument;
 
 use zebra_chain::{
-    amount::Amount,
-    block,
-    parameters::{subsidy::FundingStreamReceiver, Network},
-    transaction, transparent,
+    amount::Amount, block, error::SubsidyError, parameters::Network, transaction, transparent,
     work::equihash,
 };
 use zebra_state as zs;

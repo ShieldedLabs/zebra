@@ -348,7 +348,6 @@ impl TryFrom<ReadResponse> for Response {
             ReadResponse::ValidBestChainTipNullifiersAndAnchors => Ok(Response::ValidBestChainTipNullifiersAndAnchors),
 
             ReadResponse::UsageInfo(_)
-            | ReadResponse::TipPoolValues { .. }
             | ReadResponse::TransactionIdsForBlock(_)
             | ReadResponse::SaplingTree(_)
             | ReadResponse::OrchardTree(_)
@@ -369,6 +368,13 @@ impl TryFrom<ReadResponse> for Response {
 
             #[cfg(feature = "getblocktemplate-rpcs")]
             ReadResponse::SolutionRate(_) | ReadResponse::TipBlockSize(_) => {
+                Err("there is no corresponding Response for this ReadResponse")
+            }
+            #[cfg(zcash_unstable = "zip234")]
+            ReadResponse::TipPoolValues { tip_height, tip_hash, value_balance } => Ok(Response::TipPoolValues { tip_height, tip_hash, value_balance }),
+
+            #[cfg(not(zcash_unstable = "zip234"))]
+            ReadResponse::TipPoolValues { .. } => {
                 Err("there is no corresponding Response for this ReadResponse")
             }
         }

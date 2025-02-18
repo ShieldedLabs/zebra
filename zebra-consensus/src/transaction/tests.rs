@@ -16,6 +16,7 @@ use tower::{buffer::Buffer, service_fn, ServiceExt};
 use zebra_chain::{
     amount::{Amount, NonNegative},
     block::{self, Block, Height},
+    error::CoinbaseTransactionError,
     orchard::{Action, AuthorizedAction, Flags},
     parameters::{Network, NetworkUpgrade},
     primitives::{ed25519, x25519, Groth16Proof},
@@ -1227,7 +1228,9 @@ fn v5_coinbase_transaction_with_enable_spends_flag_fails_validation() {
 
         assert_eq!(
             check::coinbase_tx_no_prevout_joinsplit_spend(&tx),
-            Err(TransactionError::CoinbaseHasEnableSpendsOrchard)
+            Err(TransactionError::Coinbase(
+                CoinbaseTransactionError::HasEnableSpendsOrchard
+            ))
         );
     }
 }
@@ -3474,7 +3477,9 @@ fn shielded_outputs_are_not_decryptable_for_fake_v5_blocks() {
                     &net,
                     NetworkUpgrade::Nu5.activation_height(&net).unwrap(),
                 ),
-                Err(TransactionError::CoinbaseOutputsNotDecryptable)
+                Err(TransactionError::Coinbase(
+                    CoinbaseTransactionError::OutputsNotDecryptable
+                ))
             );
         }
     }

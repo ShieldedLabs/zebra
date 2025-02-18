@@ -237,16 +237,7 @@ impl TransactionError {
         match self {
             ImmatureTransparentCoinbaseSpend { .. }
             | UnshieldedTransparentCoinbaseSpend { .. }
-            | CoinbasePosition
-            | CoinbaseAfterFirst
-            | CoinbaseHasJoinSplit
-            | CoinbaseHasSpend
-            | CoinbaseHasOutputPreHeartwood
-            | CoinbaseHasEnableSpendsOrchard
-            | CoinbaseOutputsNotDecryptable
-            | CoinbaseInMempool
             | NonCoinbaseHasCoinbaseInput
-            | CoinbaseExpiryBlockHeight { .. }
             | IncorrectFee
             | Subsidy(_)
             | WrongVersion

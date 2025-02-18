@@ -686,7 +686,7 @@ pub enum Request {
     /// with the current best chain tip.
     Tip,
 
-    #[cfg(zcash_unstable = "nsm")]
+    #[cfg(zcash_unstable = "zip234")]
     TipPoolValues,
 
     /// Computes a block locator object based on the current best chain.
@@ -843,7 +843,7 @@ impl Request {
             Request::AwaitUtxo(_) => "await_utxo",
             Request::Depth(_) => "depth",
             Request::Tip => "tip",
-            #[cfg(zcash_unstable = "nsm")]
+            #[cfg(zcash_unstable = "zip234")]
             Request::TipPoolValues => "tip_pool_values",
             Request::BlockLocator => "block_locator",
             Request::Transaction(_) => "transaction",
@@ -1207,7 +1207,7 @@ impl TryFrom<Request> for ReadRequest {
     fn try_from(request: Request) -> Result<ReadRequest, Self::Error> {
         match request {
             Request::Tip => Ok(ReadRequest::Tip),
-            #[cfg(zcash_unstable = "nsm")]
+            #[cfg(zcash_unstable = "zip234")]
             Request::TipPoolValues => Ok(ReadRequest::TipPoolValues),
             Request::Depth(hash) => Ok(ReadRequest::Depth(hash)),
             Request::BestChainNextMedianTimePast => Ok(ReadRequest::BestChainNextMedianTimePast),

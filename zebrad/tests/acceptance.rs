@@ -3298,8 +3298,7 @@ async fn nu6_funding_streams_and_coinbase_balance() -> Result<()> {
         .with_slow_start_interval(Height::MIN)
         .with_activation_heights(ConfiguredActivationHeights {
             nu6: Some(1),
-            #[cfg(zcash_unstable = "nsm")]
-            zfuture: Some(2),
+            nu7: Some(2),
             ..Default::default()
         });
 
@@ -3476,13 +3475,13 @@ async fn nu6_funding_streams_and_coinbase_balance() -> Result<()> {
         .to_network();
 
     let block_height = Height(block_template.height);
-    #[cfg(zcash_unstable = "nsm")]
+    #[cfg(zcash_unstable = "zip234")]
     let expected_block_subsidy = general::block_subsidy(
         block_height,
         &network,
         MAX_MONEY.try_into().expect("MAX_MONEY is a valid amount"),
     )?;
-    #[cfg(not(zcash_unstable = "nsm"))]
+    #[cfg(not(zcash_unstable = "zip234"))]
     let expected_block_subsidy = general::block_subsidy_pre_nsm(block_height, &network)?;
 
     let (coinbase_txn, default_roots) = generate_coinbase_and_roots(
@@ -3915,6 +3914,7 @@ async fn disconnects_from_misbehaving_peers() -> Result<()> {
             canopy: Some(1),
             nu5: Some(2),
             nu6: Some(3),
+            nu7: Some(4),
             ..Default::default()
         })
         .with_slow_start_interval(Height::MIN)

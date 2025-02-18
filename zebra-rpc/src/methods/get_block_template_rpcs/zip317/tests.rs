@@ -1,7 +1,7 @@
 //! Tests for ZIP-317 transaction selection for block template production
-
 use zebra_chain::{
-    block::Height,
+    amount::MAX_MONEY,
+    block::{subsidy::general, Height},
     parameters::Network,
     transaction,
     transparent::{self, OutPoint},
@@ -29,6 +29,17 @@ fn excludes_tx_with_unselected_dependencies() {
     let like_zcashd = true;
     let extra_coinbase_data = Vec::new();
 
+    #[cfg(zcash_unstable = "zip234")]
+    let expected_block_subsidy = general::block_subsidy(
+        next_block_height,
+        &network,
+        MAX_MONEY.try_into().expect("MAX_MONEY is a valid amount"),
+    )
+    .expect("failed to get block subsidy");
+    #[cfg(not(zcash_unstable = "zip234"))]
+    let expected_block_subsidy = general::block_subsidy_pre_nsm(next_block_height, &network)
+        .expect("failed to get block subsidy");
+
     assert_eq!(
         select_mempool_transactions(
             &network,
@@ -38,6 +49,7 @@ fn excludes_tx_with_unselected_dependencies() {
             mempool_tx_deps,
             like_zcashd,
             extra_coinbase_data,
+            expected_block_subsidy,
             None,
         ),
         vec![],
@@ -77,6 +89,17 @@ fn includes_tx_with_selected_dependencies() {
     let like_zcashd = true;
     let extra_coinbase_data = Vec::new();
 
+    #[cfg(zcash_unstable = "zip234")]
+    let expected_block_subsidy = general::block_subsidy(
+        next_block_height,
+        &network,
+        MAX_MONEY.try_into().expect("MAX_MONEY is a valid amount"),
+    )
+    .expect("failed to get block subsidy");
+    #[cfg(not(zcash_unstable = "zip234"))]
+    let expected_block_subsidy = general::block_subsidy_pre_nsm(next_block_height, &network)
+        .expect("failed to get block subsidy");
+
     let selected_txs = select_mempool_transactions(
         &network,
         next_block_height,
@@ -85,6 +108,7 @@ fn includes_tx_with_selected_dependencies() {
         mempool_tx_deps.clone(),
         like_zcashd,
         extra_coinbase_data,
+        expected_block_subsidy,
         None,
     );
 

@@ -1114,7 +1114,7 @@ impl Service<Request> for StateService {
                 .boxed()
             }
 
-            #[cfg(zcash_unstable = "nsm")]
+            #[cfg(zcash_unstable = "zip234")]
             Request::TipPoolValues => {
                 // Redirect the request to the concurrent ReadStateService
                 let read_service = self.read_service.clone();
