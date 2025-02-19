@@ -1593,12 +1593,14 @@ async fn rpc_getblocktemplate_mining_address(use_p2pkh: bool) {
         parameters::NetworkKind,
         serialization::DateTime32,
         transaction::{zip317, VerifiedUnminedTx},
-        value_balance::ValueBalance,
         work::difficulty::{CompactDifficulty, ExpandedDifficulty, U256},
     };
     use zebra_consensus::MAX_BLOCK_SIGOPS;
     use zebra_network::address_book_peers::MockAddressBookPeers;
     use zebra_state::{GetBlockTemplateChainInfo, ReadRequest, ReadResponse};
+
+    #[cfg(zcash_unstable = "zip234")]
+    use zebra_chain::value_balance::ValueBalance;
 
     use crate::methods::{
         get_block_template_rpcs::{

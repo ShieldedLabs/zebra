@@ -628,6 +628,11 @@ where
         let mempool = self.mempool.clone();
         let mut latest_chain_tip = self.latest_chain_tip.clone();
         let sync_status = self.sync_status.clone();
+
+        #[cfg(not(zcash_unstable = "zip234"))]
+        let state = self.state.clone();
+
+        #[cfg(zcash_unstable = "zip234")]
         let mut state = self.state.clone();
 
         if let Some(HexData(block_proposal_bytes)) = parameters

@@ -23,7 +23,6 @@ use zebra_chain::{
     serialization::{DateTime32, ZcashDeserializeInto},
     transaction::Transaction,
     transparent,
-    value_balance::ValueBalance,
     work::difficulty::{CompactDifficulty, ParameterDifficulty as _},
 };
 use zebra_network::{address_book_peers::MockAddressBookPeers, types::MetaAddr};
@@ -35,6 +34,9 @@ use zebra_test::{
     mock_service::{MockService, PanicAssertion},
     vectors::BLOCK_MAINNET_1_BYTES,
 };
+
+#[cfg(zcash_unstable = "zip234")]
+use zebra_chain::value_balance::ValueBalance;
 
 use crate::methods::{
     get_block_template_rpcs::types::{

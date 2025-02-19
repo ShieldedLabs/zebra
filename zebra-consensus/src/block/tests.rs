@@ -21,14 +21,15 @@ use zebra_chain::{
     work::difficulty::{ParameterDifficulty as _, INVALID_COMPACT_DIFFICULTY},
 };
 use zebra_script::CachedFfiTransaction;
-use zebra_state::check::{
-    coinbase_is_first, miner_fees_are_valid, subsidy_is_valid, transaction_miner_fees_are_valid,
-};
+use zebra_state::check::{coinbase_is_first, subsidy_is_valid, transaction_miner_fees_are_valid};
 use zebra_test::transcript::{ExpectedTranscriptError, Transcript};
 
 use crate::{block::check, difficulty_is_valid, transaction};
 
 use super::*;
+
+#[cfg(any(zcash_unstable = "zip234", zcash_unstable = "zip235"))]
+use zebra_state::check::miner_fees_are_valid;
 
 static VALID_BLOCK_TRANSCRIPT: Lazy<Vec<(Request, Result<block::Hash, ExpectedTranscriptError>)>> =
     Lazy::new(|| {

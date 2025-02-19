@@ -5,7 +5,7 @@ use std::{borrow::Borrow, sync::Arc};
 use chrono::Duration;
 
 use zebra_chain::{
-    amount::{Amount, Error as AmountError, NonNegative, MAX_MONEY},
+    amount::{Amount, Error as AmountError, NonNegative},
     block::{
         self, error::BlockError, subsidy::funding_streams, subsidy::general, Block,
         ChainHistoryBlockTxAuthCommitmentHash, CommitmentError, Height,
@@ -32,6 +32,9 @@ use super::check;
 // These types are used in doc links
 #[allow(unused_imports)]
 use crate::service::non_finalized_state::Chain;
+
+#[cfg(zcash_unstable = "zip234")]
+use zebra_chain::amount::MAX_MONEY;
 
 pub(crate) mod anchors;
 pub(crate) mod difficulty;

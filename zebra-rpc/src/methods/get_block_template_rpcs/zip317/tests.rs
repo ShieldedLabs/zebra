@@ -1,6 +1,5 @@
 //! Tests for ZIP-317 transaction selection for block template production
 use zebra_chain::{
-    amount::MAX_MONEY,
     block::{subsidy::general, Height},
     parameters::Network,
     transaction,
@@ -9,6 +8,9 @@ use zebra_chain::{
 use zebra_node_services::mempool::TransactionDependencies;
 
 use super::select_mempool_transactions;
+
+#[cfg(zcash_unstable = "zip234")]
+use zebra_chain::amount::MAX_MONEY;
 
 #[test]
 fn excludes_tx_with_unselected_dependencies() {

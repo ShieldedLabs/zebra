@@ -1293,7 +1293,7 @@ dependencies = [
 [[package]]
 name = "equihash"
 version = "0.2.0"
-source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm-work#d5bf1a26bcc768f2bd957c01ba917cffd94be14e"
+source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm#dd96084ceb4b64ba4640e8e1c092c65ea773bd6f"
 dependencies = [
  "blake2b_simd",
  "byteorder",
@@ -1328,7 +1328,7 @@ dependencies = [
 [[package]]
 name = "f4jumble"
 version = "0.1.0"
-source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm-work#d5bf1a26bcc768f2bd957c01ba917cffd94be14e"
+source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm#dd96084ceb4b64ba4640e8e1c092c65ea773bd6f"
 dependencies = [
  "blake2b_simd",
 ]
@@ -5780,7 +5780,7 @@ dependencies = [
 [[package]]
 name = "zcash_address"
 version = "0.6.0"
-source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm-work#d5bf1a26bcc768f2bd957c01ba917cffd94be14e"
+source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm#dd96084ceb4b64ba4640e8e1c092c65ea773bd6f"
 dependencies = [
  "bech32",
  "bs58",
@@ -5792,7 +5792,7 @@ dependencies = [
 [[package]]
 name = "zcash_client_backend"
 version = "0.15.0"
-source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm-work#d5bf1a26bcc768f2bd957c01ba917cffd94be14e"
+source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm#dd96084ceb4b64ba4640e8e1c092c65ea773bd6f"
 dependencies = [
  "base64 0.22.1",
  "bech32",
@@ -5831,7 +5831,7 @@ dependencies = [
 [[package]]
 name = "zcash_encoding"
 version = "0.2.1"
-source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm-work#d5bf1a26bcc768f2bd957c01ba917cffd94be14e"
+source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm#dd96084ceb4b64ba4640e8e1c092c65ea773bd6f"
 dependencies = [
  "byteorder",
  "nonempty",
@@ -5840,7 +5840,7 @@ dependencies = [
 [[package]]
 name = "zcash_history"
 version = "0.4.0"
-source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm-work#d5bf1a26bcc768f2bd957c01ba917cffd94be14e"
+source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm#dd96084ceb4b64ba4640e8e1c092c65ea773bd6f"
 dependencies = [
  "blake2b_simd",
  "byteorder",
@@ -5850,7 +5850,7 @@ dependencies = [
 [[package]]
 name = "zcash_keys"
 version = "0.5.0"
-source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm-work#d5bf1a26bcc768f2bd957c01ba917cffd94be14e"
+source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm#dd96084ceb4b64ba4640e8e1c092c65ea773bd6f"
 dependencies = [
  "bech32",
  "blake2b_simd",
@@ -5888,7 +5888,7 @@ dependencies = [
 [[package]]
 name = "zcash_primitives"
 version = "0.20.0"
-source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm-work#d5bf1a26bcc768f2bd957c01ba917cffd94be14e"
+source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm#dd96084ceb4b64ba4640e8e1c092c65ea773bd6f"
 dependencies = [
  "aes",
  "bip32",
@@ -5896,7 +5896,7 @@ dependencies = [
  "bs58",
  "byteorder",
  "document-features",
- "equihash 0.2.0 (git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm-work)",
+ "equihash 0.2.0 (git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm)",
  "ff",
  "fpe",
  "group",
@@ -5926,7 +5926,7 @@ dependencies = [
 [[package]]
 name = "zcash_proofs"
 version = "0.20.0"
-source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm-work#d5bf1a26bcc768f2bd957c01ba917cffd94be14e"
+source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm#dd96084ceb4b64ba4640e8e1c092c65ea773bd6f"
 dependencies = [
  "bellman",
  "blake2b_simd",
@@ -5948,7 +5948,7 @@ dependencies = [
 [[package]]
 name = "zcash_protocol"
 version = "0.4.1"
-source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm-work#d5bf1a26bcc768f2bd957c01ba917cffd94be14e"
+source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm#dd96084ceb4b64ba4640e8e1c092c65ea773bd6f"
 dependencies = [
  "document-features",
  "memuse",
@@ -6536,7 +6536,7 @@ dependencies = [
 [[package]]
 name = "zip321"
 version = "0.2.0"
-source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm-work#d5bf1a26bcc768f2bd957c01ba917cffd94be14e"
+source = "git+https://github.com/ShieldedLabs/librustzcash/?branch=nsm#dd96084ceb4b64ba4640e8e1c092c65ea773bd6f"
 dependencies = [
  "base64 0.22.1",
  "nom",

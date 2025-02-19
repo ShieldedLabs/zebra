@@ -57,32 +57,6 @@ pub fn num_halvings(height: Height, network: &Network) -> u32 {
         .expect("already checked for negatives")
 }
 
-#[cfg(zcash_unstable = "nsm")]
-pub fn block_subsidy(
-    height: Height,
-    network: &Network,
-    money_reserve: Amount<NonNegative>,
-) -> Result<Amount<NonNegative>, SubsidyError> {
-    let nsm_activation_height = ZFuture
-        .activation_height(network)
-        .expect("ZFuture activation height should be available");
-
-    if height < nsm_activation_height {
-        block_subsidy_pre_nsm(height, network)
-    } else {
-        let money_reserve: i64 = money_reserve.into();
-        let money_reserve: i128 = money_reserve.into();
-        const BLOCK_SUBSIDY_DENOMINATOR: i128 = 10_000_000_000;
-        const BLOCK_SUBSIDY_NUMERATOR: i128 = 4_126;
-
-        // calculate the block subsidy (in zatoshi) using the money reserve, note the rounding up
-        let subsidy = (money_reserve * BLOCK_SUBSIDY_NUMERATOR + (BLOCK_SUBSIDY_DENOMINATOR - 1))
-            / BLOCK_SUBSIDY_DENOMINATOR;
-
-        Ok(subsidy.try_into().expect("subsidy should fit in Amount"))
-    }
-}
-
 #[cfg(zcash_unstable = "zip234")]
 pub fn block_subsidy(
     height: Height,

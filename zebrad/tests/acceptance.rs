@@ -3255,7 +3255,6 @@ async fn trusted_chain_sync_handles_forks_correctly() -> Result<()> {
 #[cfg(feature = "getblocktemplate-rpcs")]
 async fn nu6_funding_streams_and_coinbase_balance() -> Result<()> {
     use zebra_chain::{
-        amount::MAX_MONEY,
         block::subsidy::general,
         chain_sync_status::MockSyncStatus,
         parameters::{
@@ -3286,6 +3285,10 @@ async fn nu6_funding_streams_and_coinbase_balance() -> Result<()> {
         GetBlockTemplateRpcImpl, GetBlockTemplateRpcServer,
     };
     use zebra_test::mock_service::MockService;
+
+    #[cfg(zcash_unstable = "zip234")]
+    use zebra_chain::amount::MAX_MONEY;
+
     let _init_guard = zebra_test::init();
 
     tracing::info!("running nu6_funding_streams_and_coinbase_balance test");

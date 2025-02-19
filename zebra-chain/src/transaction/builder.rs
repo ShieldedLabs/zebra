@@ -16,8 +16,7 @@ impl Transaction {
         height: Height,
         outputs: impl IntoIterator<Item = (Amount<NonNegative>, transparent::Script)>,
         extra_coinbase_data: Vec<u8>,
-        #[cfg(zcash_unstable = "zip235")]
-        miner_fee: Amount<NonNegative>,
+        #[cfg(zcash_unstable = "zip235")] miner_fee: Amount<NonNegative>,
         zip233_amount: Option<Amount<NonNegative>>,
     ) -> Transaction {
         // # Consensus

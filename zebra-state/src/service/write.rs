@@ -7,7 +7,6 @@ use tokio::sync::{
 };
 
 use zebra_chain::{
-    amount::MAX_MONEY,
     block::{
         self,
         subsidy::{funding_streams::funding_stream_values, general},
@@ -28,6 +27,9 @@ use crate::{
     },
     CommitSemanticallyVerifiedError, SemanticallyVerifiedBlock,
 };
+
+#[cfg(zcash_unstable = "zip234")]
+use zebra_chain::amount::MAX_MONEY;
 
 // These types are used in doc links
 #[allow(unused_imports)]
